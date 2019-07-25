@@ -6,3 +6,23 @@
     background: #000;
     width: 1px;
 }
+
+
+html {
+    background: #dedede;
+  }
+
+
+  svg {
+    width: 400px;
+    fill: white;
+    stroke: black;
+    stroke-width: 1;
+    stroke-linecap: round;
+  }
+
+
+  .marks {
+    transform: translate(25px, 25px);
+    stroke-width: 0.1;
+  }
