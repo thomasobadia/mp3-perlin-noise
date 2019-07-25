@@ -1,0 +1,8 @@
+.test-box{
+    position: absolute;
+    height: 1px;
+    top: 50%;
+
+    background: #000;
+    width: 1px;
+}
