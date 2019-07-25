@@ -39,6 +39,10 @@ button.addEventListener('click',(e)=>{
     initSound (e.target)
 
 })
+button.addEventListener('touch',(e)=>{
+    initSound (e.target)
+
+})
 
 
 
