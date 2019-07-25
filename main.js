@@ -2,25 +2,27 @@ noise.seed(Math.random())
 let t = 0
 let container = document.getElementById('container')
 let el = document.getElementById('audio')
+let button = document.querySelector('.audio-overlay')
+let audioText = document.querySelector('.audio-text')
+let init = true
 
 
 const perlinMovement = (analyser,data) => {
 
     let linesArray = createLines() 
     setInterval(() => {
-        // while (container.firstChild) {
-        //     container.removeChild(container.firstChild);
-        // }
-        console.log(linesArray)
         let volume = getVolume(analyser,data)
 
         for(let y = 0; y <linesArray.length ; y++){
             let range = (1 - noise.perlin2(t, y*0.05)) * volume
-            let height = scale(range, 0, 60, 10, 20 )
+            let height = scale(range, 0, 60, 20, 32 )
+            if(height < 20){
+                height =20
+            }
             linesArray[y].setAttribute('x2', height)
         }
 
-        t +=0.001
+        t +=0.005
     } , 10
 
     )
@@ -33,32 +35,41 @@ const scale = (num, in_min, in_max, out_min, out_max) => {
 }
 
 
+button.addEventListener('click',(e)=>{
+    initSound (e.target)
 
-el.addEventListener('play', () => {
-    initSound ()
 })
 
 
 
 
-function initSound (){
+function initSound (target){
+    if(init){
+        var ctx = new AudioContext();
+        var audioSrc = ctx.createMediaElementSource(el);
+        var analyser = ctx.createAnalyser();
+        analyser.smoothingTimeConstant = 0.3;
+        analyser.fftSize = 1024;
+    
+        audioSrc.connect(analyser);
+        audioSrc.connect(ctx.destination);
+       
+        var frequencyData = new Uint8Array(analyser.frequencyBinCount);
+        perlinMovement(analyser,frequencyData)
+        el.play()
+        audioText.innerHTML = "pause"
+        init = false
 
+    }else {
+        el.paused? el.play() : el.pause();
+        el.paused? audioText.innerHTML = "écouter" : audioText.innerHTML = "pause"
 
-    var ctx = new AudioContext();
-    var audioSrc = ctx.createMediaElementSource(el);
-    var analyser = ctx.createAnalyser();
-    analyser.smoothingTimeConstant = 0.3;
-    analyser.fftSize = 1024;
-
-    audioSrc.connect(analyser);
-    audioSrc.connect(ctx.destination);
-   
-    var frequencyData = new Uint8Array(analyser.frequencyBinCount);
-
-
-    perlinMovement(analyser,frequencyData)
+    }
    
 }
+
+
+
 
 function createLines () {
 
@@ -66,10 +77,10 @@ function createLines () {
     for (let y = 0; y < 1; y += 0.01) {
         let line = document.createElementNS('http://www.w3.org/2000/svg','line');
         line.setAttribute('transform',"rotate(" + y * 360 + ")")
-        line.setAttribute('x1','10')
+        line.setAttribute('x1','20')
         line.setAttribute('y1','0')
         line.setAttribute('y2','0')
-        line.setAttribute('x2', 16)
+        line.setAttribute('x2', 20)
         container.appendChild(line); 
         lines.push(line)
     }
